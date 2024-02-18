@@ -1,12 +1,15 @@
-import { Button, Input, message } from "antd"
+import { Button, Input, Select, message } from "antd"
 import RandomBG from "../components/RandomBG"
 import { Link, useNavigate } from "react-router-dom"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { isAuthenticated } from "../utils/auth";
+import { sanityClient } from "../lib/sanity/getClient";
 
 function Biodata() {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem('userData'));
+  const idUser = (localStorage.getItem('idUser'));
+  console.log('cek id user: ', idUser)
 
   useEffect(() => {
     // Check if the user is authenticated when the component mounts
@@ -16,6 +19,137 @@ function Biodata() {
       navigate("/");
     }
   }, [navigate]);
+
+  const [serverData, setServerData] = useState({
+    data: [],
+    error: null,
+    loading: true,
+  });
+
+  useEffect(() => {
+    async function fetchSanityData() {
+      try {
+        const sanityData = await sanityClient.fetch(`*[_type == 'user']{
+          _id,
+          name,
+          email,
+          type,
+          password,
+          umur,
+          gender,
+          alamat,
+          faskes,
+          tb,
+          bb,
+          keluhan,
+          telepon,
+          resiko
+        }`);
+
+        // Filter the data array based on idUser
+        const filteredData = sanityData.filter(item => item._id === idUser);
+
+        setServerData({
+          data: filteredData,
+          error: null,
+          loading: false,
+        });
+      } catch (error) {
+        setServerData({
+          data: [],
+          error: 'Error getting data. Please try again later.',
+          loading: false,
+        });
+      }
+    }
+
+    fetchSanityData();
+  }, []);
+  console.log('cek biodata: ', serverData)
+
+  const updateSanityUser = async (userData) => {
+    // eslint-disable-next-line no-unused-vars
+    const { Option } = Select;
+    try {
+      const response = await fetch(`https://ln9ujpru.api.sanity.io/v2021-03-25/data/mutate/production`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer skAdQo8vEzaH81Ah4n2X8QDNsgIfdWkJlLmbo3CbT6Nt3nW7iTLx2roYCOm9Rlp1mQV2nEEGCqf4aGSMaJx67iK5PZPe7CgmI9Lx9diRdq0ssoRzl1LhiUFXHQmKu0utxgBa1ttoKwat3KIFt2B5vskrT82ekR5B8sbSzE51VjZHy3T7Q62P`,
+        },
+        body: JSON.stringify({
+          mutations: [
+            {
+              patch: {
+                id: idUser, // The _id of the document to update
+                set: {
+                  umur: userData.umur,
+                  gender: userData.gender,
+                  alamat: userData.alamat,
+                  faskes: userData.faskes,
+                  tb: userData.tb,
+                  bb: userData.bb,
+                  keluhan: userData.keluhan,
+                  telepon: userData.telepon,
+                },
+              },
+            },
+          ],
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to create user in Sanity');
+      }
+  
+      const data = await response.json();
+      console.log('User created:', data);
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
+  };
+
+  const [formUpdate, setFormUpdate] = useState({
+    umur: "",
+    gender: "",
+    alamat: "",
+    faskes: "",
+    tb: "",
+    bb: "",
+    keluhan: "",
+    telepon: "",
+  });
+
+  useEffect(() => {
+    setFormUpdate({
+      umur: serverData?.data[0]?.umur || "",
+      gender: serverData?.data[0]?.gender || "",
+      alamat: serverData?.data[0]?.alamat || "",
+      faskes: serverData?.data[0]?.faskes || "",
+      tb: serverData?.data[0]?.tb || "",
+      bb: serverData?.data[0]?.bb || "",
+      keluhan: serverData?.data[0]?.keluhan || "",
+      telepon: serverData?.data[0]?.telepon || "",
+    });
+  }, [serverData]);
+
+  const handleUpdateChange = (e) => {
+    const { name, value } = e.target;
+    setFormUpdate({ ...formUpdate, [name]: value });
+  };
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    try {
+      // Send POST request to your Sanity backend to create a new user
+      await updateSanityUser(formUpdate);
+
+      message.success("Update biodata berhasil.")
+
+    } catch (error) {
+      console.error('Error registering user:', error);
+    }
+  }
   return (
     <>
       <section>
@@ -24,7 +158,7 @@ function Biodata() {
             <RandomBG />
           </div>
           <div className="lg:w-1/2 lg:py-0 py-10 flex items-center">
-            <form className="w-full lg:px-28 px-4 items-center">
+            <form className="w-full lg:px-28 px-4 items-center" onSubmit={handleSubmit}>
               <h2 className="font-bold text-[18px] lg:text-4xl mb-10 text-gray-900 uppercase">Biodata <span className="text-sm">({userData[0]?.name})</span></h2>
               <Input
                 type="text"
@@ -32,13 +166,17 @@ function Biodata() {
                 placeholder="Umur"
                 size="large"
                 className="mb-4 border"
+                value={formUpdate.umur ? `${formUpdate.umur} tahun` : ''}
+                onChange={handleUpdateChange}
               />
               <Input
                 type="text"
-                name="jenisKelamin"
+                name="gender"
                 placeholder="Jenis Kelamin"
                 size="large"
                 className="mb-4 border"
+                value={formUpdate.gender}
+                onChange={handleUpdateChange}
               />
               <Input
                 type="text"
@@ -46,6 +184,8 @@ function Biodata() {
                 placeholder="Alamat"
                 size="large"
                 className="mb-4 border"
+                value={formUpdate.alamat}
+                onChange={handleUpdateChange}
               />
               <Input
                 type="text"
@@ -53,6 +193,8 @@ function Biodata() {
                 placeholder="Fasyankes yang digunakan"
                 size="large"
                 className="mb-4 border"
+                value={formUpdate.faskes}
+                onChange={handleUpdateChange}
               />
               <Input
                 type="text"
@@ -60,6 +202,8 @@ function Biodata() {
                 placeholder="Tinggi Badan"
                 size="large"
                 className="mb-4 border"
+                value={formUpdate.tb ? `${formUpdate.tb} cm` : ''}
+                onChange={handleUpdateChange}
               />
               <Input
                 type="text"
@@ -67,6 +211,8 @@ function Biodata() {
                 placeholder="Berat Badan"
                 size="large"
                 className="mb-4 border"
+                value={formUpdate.bb ? `${formUpdate.bb} kg` : ''}
+                onChange={handleUpdateChange}
               />
               <Input
                 type="text"
@@ -74,6 +220,8 @@ function Biodata() {
                 placeholder="Keluhan Saat Ini"
                 size="large"
                 className="mb-4 border"
+                value={formUpdate.keluhan}
+                onChange={handleUpdateChange}
               />
               <Input
                 type="number"
@@ -81,6 +229,8 @@ function Biodata() {
                 placeholder="Nomor Telepon"
                 size="large"
                 className="mb-8 border"
+                value={formUpdate.telepon}
+                onChange={handleUpdateChange}
               />
               <Button
                 className="text-white bg-rose-700 w-full"
