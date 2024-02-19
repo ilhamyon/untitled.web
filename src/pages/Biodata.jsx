@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { isAuthenticated } from "../utils/auth";
 import { sanityClient } from "../lib/sanity/getClient";
 
+const { Option } = Select;
+
 function Biodata() {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem('userData'));
@@ -68,8 +70,6 @@ function Biodata() {
   console.log('cek biodata: ', serverData)
 
   const updateSanityUser = async (userData) => {
-    // eslint-disable-next-line no-unused-vars
-    const { Option } = Select;
     try {
       const response = await fetch(`https://ln9ujpru.api.sanity.io/v2021-03-25/data/mutate/production`, {
         method: 'POST',
@@ -166,10 +166,10 @@ function Biodata() {
                 placeholder="Umur"
                 size="large"
                 className="mb-4 border"
-                value={formUpdate.umur ? `${formUpdate.umur} tahun` : ''}
+                value={formUpdate.umur}
                 onChange={handleUpdateChange}
               />
-              <Input
+              {/* <Input
                 type="text"
                 name="gender"
                 placeholder="Jenis Kelamin"
@@ -177,7 +177,19 @@ function Biodata() {
                 className="mb-4 border"
                 value={formUpdate.gender}
                 onChange={handleUpdateChange}
-              />
+              /> */}
+              <Select
+                defaultValue="Laki-laki"
+                name="gender"
+                size="large"
+                className="mb-4 w-full"
+                placeholder="Jenis Kelamin"
+                value={formUpdate.gender}
+                onChange={(value) => setFormUpdate({ ...formUpdate, gender: value })}
+              >
+                <Option value="Laki-laki">Laki-laki</Option>
+                <Option value="Perempuan">Perempuan</Option>
+              </Select>
               <Input
                 type="text"
                 name="alamat"
@@ -202,7 +214,7 @@ function Biodata() {
                 placeholder="Tinggi Badan"
                 size="large"
                 className="mb-4 border"
-                value={formUpdate.tb ? `${formUpdate.tb} cm` : ''}
+                value={formUpdate.tb}
                 onChange={handleUpdateChange}
               />
               <Input
@@ -211,7 +223,7 @@ function Biodata() {
                 placeholder="Berat Badan"
                 size="large"
                 className="mb-4 border"
-                value={formUpdate.bb ? `${formUpdate.bb} kg` : ''}
+                value={formUpdate.bb}
                 onChange={handleUpdateChange}
               />
               <Input
