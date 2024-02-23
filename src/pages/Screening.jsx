@@ -136,19 +136,30 @@ function Screening() {
     }
   }
 
-  let conclusion = '';
+  const [conclusion, setConclusion] = useState('');
 
-  if (serverData.data[0]?.question6 === true || serverData.data[0]?.question7 === true) {
-    conclusion = 'Kategori Tinggi';
-  } else if (serverData.data[0]?.question8 === true) {
-    conclusion = 'Kategori Berat';
-  } else if (serverData.data[0]?.question3 === true || serverData.data[0]?.question4 === true || serverData.data[0]?.question5 === true) {
-    conclusion = 'Kategori Sedang';
-  } else if (serverData.data[0]?.question1 === true || serverData.data[0]?.question2 === true) {
-    conclusion = 'Kategori Ringan';
-  } else {
-    conclusion = 'Kategori Tidak Beresiko';
-  }
+  useEffect(() => {
+    let newConclusion = '';
+
+    if (serverData.data.length > 0) {
+      if (serverData.data[0]?.question6 === true || serverData.data[0]?.question7 === true) {
+        newConclusion = 'Tinggi';
+      } else if (serverData.data[0]?.question8 === true) {
+        newConclusion = 'Berat';
+      } else if (serverData.data[0]?.question3 === true || serverData.data[0]?.question4 === true || serverData.data[0]?.question5 === true) {
+        newConclusion = 'Sedang';
+      } else if (serverData.data[0]?.question1 === true || serverData.data[0]?.question2 === true) {
+        newConclusion = 'Ringan';
+      } else {
+        newConclusion = 'Tidak Beresiko';
+      }
+    } else {
+      newConclusion = 'Tidak Beresiko';
+    }
+
+    setConclusion(newConclusion);
+    updateSanityUser(newConclusion);
+  }, [serverData]);
 
   const documentId = serverData.data[0]?._id;
 
@@ -195,7 +206,7 @@ function Screening() {
     }
   };
   
-  const updateSanityUser = async (userData) => {
+  const updateSanityUser = async (conclusion) => {
     // eslint-disable-next-line no-unused-vars
     const { Option } = Select;
     try {
@@ -211,7 +222,7 @@ function Screening() {
               patch: {
                 id: idUser, // The _id of the document to update
                 set: {
-                  resiko: userData.resiko,
+                  resiko: conclusion,
                 },
               },
             },
@@ -395,7 +406,9 @@ function Screening() {
 
       {serverData.data.length === 0 ? null :
         <section className="text-gray-900 py-10">
-          <h2 className="font-bold text-center text-[18px] lg:text-4xl mb-10 text-gray-900 uppercase">Kesimpulan: {conclusion}</h2>
+          <h2 className="font-bold text-center text-[18px] lg:text-3xl mb-10 text-gray-900">
+            {conclusion === 'Tidak Beresiko' ? 'Kamu saat ini' : 'Waw, kamu berada dalam kategori Perilaku Seksual Berisiko'} {conclusion}
+          </h2>
           <div className="flex justify-center gap-6">
             <Button size="large" onClick={handleDeleteScreening}>Ulangi Screening</Button>
             <Button size="large" >Lihat Video Terapi</Button>
