@@ -123,7 +123,7 @@ function Biodata() {
   useEffect(() => {
     setFormUpdate({
       umur: serverData?.data[0]?.umur || "",
-      gender: serverData?.data[0]?.gender || "",
+      gender: serverData?.data[0]?.gender || "Jenis Kelamin",
       alamat: serverData?.data[0]?.alamat || "",
       faskes: serverData?.data[0]?.faskes || "",
       tb: serverData?.data[0]?.tb || "",
@@ -145,6 +145,7 @@ function Biodata() {
       await updateSanityUser(formUpdate);
 
       message.success("Update biodata berhasil.")
+      navigate('/screening');
 
     } catch (error) {
       console.error('Error registering user:', error);
@@ -168,6 +169,7 @@ function Biodata() {
                 className="mb-4 border"
                 value={formUpdate.umur}
                 onChange={handleUpdateChange}
+                required
               />
               {/* <Input
                 type="text"
@@ -184,6 +186,7 @@ function Biodata() {
                 size="large"
                 className="mb-4 w-full"
                 placeholder="Jenis Kelamin"
+                required
                 value={formUpdate.gender}
                 onChange={(value) => setFormUpdate({ ...formUpdate, gender: value })}
               >
@@ -198,6 +201,7 @@ function Biodata() {
                 className="mb-4 border"
                 value={formUpdate.alamat}
                 onChange={handleUpdateChange}
+                required
               />
               <Input
                 type="text"
@@ -207,6 +211,7 @@ function Biodata() {
                 className="mb-4 border"
                 value={formUpdate.faskes}
                 onChange={handleUpdateChange}
+                required
               />
               <Input
                 type="text"
@@ -216,6 +221,7 @@ function Biodata() {
                 className="mb-4 border"
                 value={formUpdate.tb}
                 onChange={handleUpdateChange}
+                required
               />
               <Input
                 type="text"
@@ -225,6 +231,7 @@ function Biodata() {
                 className="mb-4 border"
                 value={formUpdate.bb}
                 onChange={handleUpdateChange}
+                required
               />
               <Input
                 type="text"
