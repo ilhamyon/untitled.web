@@ -106,7 +106,7 @@ function Home() {
           <div className="max-w-xl text-center sm:text-left">
             <h1 className="text-3xl font-extrabold sm:text-5xl text-gray-800">
               Selamat datang di
-              <strong className="block font-extrabold text-rose-700"> Anti SeksBebas2 Club. </strong>
+              <strong className="block font-extrabold text-rose-700"> Resesi App. </strong>
             </h1>
 
             <p className="mt-4 max-w-lg sm:text-xl/relaxed text-gray-700">

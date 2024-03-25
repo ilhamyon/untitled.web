@@ -10,6 +10,7 @@ import Pubertas from "../assets/pubertas.png";
 import Jerawat from "../assets/jerawat.png";
 import MimpiBasah from "../assets/mimpibasah.png";
 import Menstruasi from "../assets/menstruasi.png";
+import Menstruasi2 from "../assets/menstruasi2.png";
 import Reproduksi from "../assets/reproduksi.png";
 import Reproduksi2 from "../assets/reproduksi2.png";
 import KekerasanSeks from "../assets/cegahkekerasanseks.png";
@@ -448,7 +449,7 @@ function Screening() {
                 <div className="flex flex-col justify-center">
                   <BeresikoRendah />
                   <div className="flex justify-center gap-6 mt-14">
-                    <Button size="large" >Ayok Nonton terapi SEFT</Button>
+                    <Button size="large" onClick={() => handleOpenModal("TerapiSeft")}>Ayok Nonton terapi SEFT</Button>
                     <a href="https://wa.me/6285242426909?text=Hi%2C%20Saya%20ingin%20konsultasi" target="_blank">
                     <Button size="large" className="bg-green-500 text-white flex gap-2 items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="#333" x="0px" y="0px" width="22" height="22" viewBox="0 0 50 50">
@@ -460,8 +461,6 @@ function Screening() {
                   </div>
                   <div className="flex justify-center gap-6 mt-8">
                     <Button size="large" onClick={() => handleOpenModal("KekerasanSeks")}>Cegah Kekerasan Seksual</Button>
-                    <Button size="large" onClick={() => handleOpenModal("HindariSeks")}>Hindari Seks pranikah</Button>
-                    <Button size="large" onClick={() => handleOpenModal("InfeksiMenular")}>Infeksi Menular Seksual</Button>
                   </div>
                 </div>
               </>
@@ -472,7 +471,7 @@ function Screening() {
                 <div className="flex flex-col justify-center">
                   <BeresikoSedang />
                   <div className="flex justify-center gap-6 mt-14">
-                    <Button size="large" >Ayok Nonton terapi SEFT</Button>
+                    <Button size="large" onClick={() => handleOpenModal("TerapiSeft")}>Ayok Nonton terapi SEFT</Button>
                     <a href="https://wa.me/6285242426909?text=Hi%2C%20Saya%20ingin%20konsultasi" target="_blank">
                     <Button size="large" className="bg-green-500 text-white flex gap-2 items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="#333" x="0px" y="0px" width="22" height="22" viewBox="0 0 50 50">
@@ -484,8 +483,6 @@ function Screening() {
                   </div>
                   <div className="flex justify-center gap-6 mt-8">
                     <Button size="large" onClick={() => handleOpenModal("Pubertas")}>Tahap Perkembangan remaja</Button>
-                    <Button size="large" onClick={() => handleOpenModal("HindariSeks")}>Hindari Seks Pranikah</Button>
-                    <Button size="large" onClick={() => handleOpenModal("InfeksiMenular")}>Infeksi menular Seksual</Button>
                   </div>
                 </div>
               </>
@@ -496,7 +493,7 @@ function Screening() {
                 <div className="flex flex-col justify-center">
                   <BeresikoTinggi />
                   <div className="flex justify-center gap-6 mt-14">
-                    <Button size="large" >Ayok Nonton terapi SEFT</Button>
+                    <Button size="large" onClick={() => handleOpenModal("TerapiSeft")}>Ayok Nonton terapi SEFT</Button>
                     <a href="https://wa.me/6285242426909?text=Hi%2C%20Saya%20ingin%20konsultasi" target="_blank">
                     <Button size="large" className="bg-green-500 text-white flex gap-2 items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="#333" x="0px" y="0px" width="22" height="22" viewBox="0 0 50 50">
@@ -509,7 +506,7 @@ function Screening() {
                   <div className="flex justify-center gap-6 mt-8">
                     <Button size="large" onClick={() => handleOpenModal("Pubertas")}>Tahap Perkembangan remaja</Button>
                     <Button size="large" onClick={() => handleOpenModal("Reproduksi2")}>Kesehatan reproduksi</Button>
-                    <Button size="large" onClick={() => handleOpenModal("KekerasanSeks2")}>Cegah kekerasan Seksual</Button>
+                    <Button size="large" onClick={() => handleOpenModal("KekerasanSeks")}>Cegah kekerasan Seksual</Button>
                   </div>
                 </div>
               </>
@@ -524,14 +521,42 @@ function Screening() {
                 Tutup
               </Button>
             ]}
+            centered
+            width={800}
           >
-            <div className="mt-6">
-              {modalContentId === "Pubertas" && <img src={Pubertas} alt="Pubertas" />}
+            <div className="mt-6" style={{ overflow: 'auto', maxHeight: '560px', width: '100%', display: 'flex' }}>
+              {modalContentId === "Pubertas" && 
+              <div style={{ userSelect: 'none' }}>
+                <img src={Pubertas} onContextMenu={(e) => e.preventDefault()} style={{ pointerEvents: 'none' }} />
+                <img src={Jerawat} onContextMenu={(e) => e.preventDefault()} style={{ pointerEvents: 'none' }} />
+                <img src={MimpiBasah} onContextMenu={(e) => e.preventDefault()} style={{ pointerEvents: 'none' }} />
+                <img src={Menstruasi2} onContextMenu={(e) => e.preventDefault()} style={{ pointerEvents: 'none' }} />
+              </div>
+              }
+
               {modalContentId === "HindariSeks" && <img src={HindariSeks} alt="HindariSeks" />}
               {modalContentId === "InfeksiMenular" && <img src={InfeksiMenular} alt="InfeksiMenular" />}
               {modalContentId === "KekerasanSeks2" && <img src={KekerasanSeks2} alt="KekerasanSeks2" />}
-              {modalContentId === "Reproduksi2" && <img src={Reproduksi2} alt="Reproduksi2" />}
-              {modalContentId === "KekerasanSeks" && <img src={KekerasanSeks} alt="KekerasanSeks" />}
+
+              {modalContentId === "Reproduksi2" && 
+              <div>
+                <img src={Reproduksi2} onContextMenu={(e) => e.preventDefault()} style={{ pointerEvents: 'none' }} />
+              </div>
+              }
+
+              {modalContentId === "KekerasanSeks" &&
+              <div>
+                <img src={KekerasanSeks} onContextMenu={(e) => e.preventDefault()} style={{ pointerEvents: 'none' }} />
+                <img src={KekerasanSeks2} onContextMenu={(e) => e.preventDefault()} style={{ pointerEvents: 'none' }} />
+              </div>
+              }
+
+              {modalContentId === "TerapiSeft" &&
+                <div>
+                  <h3 className="py-6 text-2xl font-bold">Terapi Seft</h3>
+                  <iframe width="750" height="421" src="https://www.youtube.com/embed/8PDy-J6mhTU?rel=0" frameBorder="0" allowfullscreen></iframe>
+                </div>            
+              }
             </div>
           </Modal>
         </section>

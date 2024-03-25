@@ -73,9 +73,8 @@ function Login() {
       (userData) => userData.email === username && userData.password === password
     );
 
-    const filteredData = serverData?.data.filter(item => item._id === user._id);
-
     if (user) {
+      const filteredData = serverData?.data.filter(item => item._id === user._id);
       // Login berhasil
       console.log("Login berhasil:", user.name);
       message.success('Login Berhasil');
